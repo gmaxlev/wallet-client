@@ -1,5 +1,9 @@
 import { useState } from "react";
 
+/**
+ * Returns state of a request and function to call it
+ * @param fn
+ */
 export const useRequest = <D, R extends any[]>(
   fn: (...rest: R) => Promise<D>
 ) => {
