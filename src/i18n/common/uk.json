@@ -1,0 +1,17 @@
+{
+  "fields": {
+    "email": {
+      "label": "Email",
+      "errors": {
+        "required": "Введіть електронну адресу",
+        "email": "Неправильний формат"
+      }
+    },
+    "password": {
+      "label": "Пароль",
+      "errors": {
+        "required": "Введіть пароль"
+      }
+    }
+  }
+}
