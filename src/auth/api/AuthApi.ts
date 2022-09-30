@@ -7,3 +7,10 @@ export function signIn({ email, password }: SignInRequestDTO) {
     password,
   });
 }
+
+export function signUp({ email, password }: SignInRequestDTO) {
+  return client.post("/auth/sign-up", {
+    email,
+    password,
+  });
+}

@@ -1,5 +1,7 @@
 {
   "signIn": "Увійти",
   "rememberMe": "Запам'ятати мене",
-  "signInSubmit": "Увійти"
+  "signInSubmit": "Увійти",
+  "signUp": "Реєстрація",
+  "signUpSubmit": "Зареєструватися"
 }

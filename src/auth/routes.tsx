@@ -1,6 +1,7 @@
 import SignInPage from "./pages/SignInPage";
 import i18next from "../i18n";
 import uk from "./locales/uk.json";
+import SignUpPage from "./pages/SignUpPage";
 
 export const authRoutes = [
   {
@@ -12,6 +13,10 @@ export const authRoutes = [
       {
         path: "sign-in",
         element: <SignInPage />,
+      },
+      {
+        path: "sign-up",
+        element: <SignUpPage />,
       },
     ],
   },
