@@ -15,14 +15,14 @@ import { LoadingButton } from "@mui/lab";
 import { useTranslation } from "react-i18next";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import { useRequest } from "../../hooks";
-import { AuthApi } from "../api/AuthApi";
+import { signIn } from "../api/AuthApi";
 
 export default observer(function SignInPage() {
   const { t } = useTranslation("auth");
 
   const { request, isFetching } = useRequest(
     (email: string, password: string) => {
-      return AuthApi.signIn({ email, password });
+      return signIn({ email, password });
     }
   );
 

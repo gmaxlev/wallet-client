@@ -1,5 +1,9 @@
-export const AuthApi = new (class AuthApi {
-  signIn(params: { email: string; password: string }) {
-    return new Promise<number>((resolve) => setTimeout(() => resolve(1), 1000));
-  }
-})();
+import { client } from "../../api/client";
+import { SignInRequestDTO } from "../dto";
+
+export function signIn({ email, password }: SignInRequestDTO) {
+  return client.post("/auth/sign-in", {
+    email,
+    password,
+  });
+}
