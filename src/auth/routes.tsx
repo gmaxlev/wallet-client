@@ -1,22 +1,38 @@
-import SignInPage from "./pages/SignInPage";
 import i18next from "../i18n";
-import uk from "./locales/uk.json";
-import SignUpPage from "./pages/SignUpPage";
+import { Suspense } from "react";
+import React from "react";
+import auth from "./services/auth";
+import { redirect } from "react-router-dom";
+
+const SignInPage = React.lazy(() => import("./pages/SignInPage"));
+const SignUpPage = React.lazy(() => import("./pages/SignUpPage"));
 
 export const authRoutes = [
   {
     path: "/auth",
-    loader() {
-      return i18next.addResourceBundle("uk", "auth", uk);
+    async loader() {
+      if (auth.isLogin) {
+        return redirect("/");
+      }
+      const uk = await import("./locales/uk.json");
+      return i18next.addResourceBundle("uk", "auth", uk.default);
     },
     children: [
       {
         path: "sign-in",
-        element: <SignInPage />,
+        element: (
+          <Suspense>
+            <SignInPage />
+          </Suspense>
+        ),
       },
       {
         path: "sign-up",
-        element: <SignUpPage />,
+        element: (
+          <Suspense>
+            <SignUpPage />
+          </Suspense>
+        ),
       },
     ],
   },

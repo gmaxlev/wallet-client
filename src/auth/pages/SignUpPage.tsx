@@ -8,14 +8,14 @@ import { LoadingButton } from "@mui/lab";
 import { useTranslation } from "react-i18next";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useRequest } from "../../hooks";
-import { signIn } from "../api/AuthApi";
+import auth from "../services/auth";
 
 export default observer(function SignInPage() {
   const { t } = useTranslation("auth");
 
   const { request, isFetching } = useRequest(
     (email: string, password: string) => {
-      return signIn({ email, password });
+      return auth.signUp({ email, password });
     }
   );
 

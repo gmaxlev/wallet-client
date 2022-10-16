@@ -15,14 +15,14 @@ import { LoadingButton } from "@mui/lab";
 import { useTranslation } from "react-i18next";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import { useRequest } from "../../hooks";
-import { signIn } from "../api/AuthApi";
+import auth from "../services/auth";
 
 export default observer(function SignInPage() {
   const { t } = useTranslation("auth");
 
   const { request, isFetching } = useRequest(
-    (email: string, password: string) => {
-      return signIn({ email, password });
+    (email: string, password: string, remember: boolean) => {
+      return auth.signIn({ email, password, remember });
     }
   );
 
@@ -33,7 +33,7 @@ export default observer(function SignInPage() {
       remember: true,
     },
     onSubmit(values) {
-      return request(values.email, values.password);
+      return request(values.email, values.password, values.remember);
     },
     validationSchema: Yup.object({
       email: emailRule,
