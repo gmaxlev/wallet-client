@@ -16,9 +16,15 @@ import { useTranslation } from "react-i18next";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import { useRequest } from "../../hooks";
 import auth from "../services/auth";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default observer(function SignInPage() {
   const { t } = useTranslation("auth");
+
+  const [isRegistered, setRegistered] = useState(false);
+
+  const navigate = useNavigate();
 
   const { request, isFetching } = useRequest(
     (email: string, password: string, remember: boolean) => {
@@ -26,14 +32,22 @@ export default observer(function SignInPage() {
     }
   );
 
+  const isDisabled = useMemo<boolean>(() => {
+    return isRegistered || isFetching;
+  }, [isRegistered, isFetching]);
+
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
       remember: true,
     },
-    onSubmit(values) {
-      return request(values.email, values.password, values.remember);
+    async onSubmit(values) {
+      try {
+        await request(values.email, values.password, values.remember);
+        setRegistered(true);
+        navigate("/app/");
+      } catch (e) {}
     },
     validationSchema: Yup.object({
       email: emailRule,
@@ -64,7 +78,7 @@ export default observer(function SignInPage() {
               fullWidth
               label={t("common:fields.email.label")}
               variant={"outlined"}
-              disabled={isFetching}
+              disabled={isDisabled}
               error={!!formik.touched.email && !!formik.errors.email}
               {...getValidationFieldProps(formik, "email")}
               {...formik.getFieldProps("email")}
@@ -80,7 +94,7 @@ export default observer(function SignInPage() {
               fullWidth
               label={t("common:fields.password.label")}
               variant={"outlined"}
-              disabled={isFetching}
+              disabled={isDisabled}
               {...getValidationFieldProps(formik, "password")}
               {...formik.getFieldProps("password")}
             />
@@ -91,7 +105,7 @@ export default observer(function SignInPage() {
             }}
           >
             <FormControlLabel
-              disabled={isFetching}
+              disabled={isDisabled}
               control={
                 <Checkbox
                   name={"remember"}
@@ -105,8 +119,8 @@ export default observer(function SignInPage() {
           <LoadingButton
             type={"submit"}
             variant={"contained"}
-            disabled={isFetching}
-            loading={isFetching}
+            disabled={isDisabled}
+            loading={isDisabled}
             size={"large"}
             fullWidth
           >

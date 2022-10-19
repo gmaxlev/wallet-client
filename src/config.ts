@@ -1,6 +1,6 @@
 const config = {
   API: {
-    HOST: "http://localhost:3000",
+    HOST: "http://192.168.100.87:3000/",
   },
 };
 

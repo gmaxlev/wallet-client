@@ -2,7 +2,11 @@ import { observer } from "mobx-react-lite";
 import { FormGroup, Grid, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { emailRule, passwordRule } from "../../common/validation-rules";
+import {
+  emailRule,
+  nameRule,
+  passwordRule,
+} from "../../common/validation-rules";
 import { getValidationFieldProps } from "../../common/validation-utils";
 import { LoadingButton } from "@mui/lab";
 import { useTranslation } from "react-i18next";
@@ -14,8 +18,8 @@ export default observer(function SignInPage() {
   const { t } = useTranslation("auth");
 
   const { request, isFetching } = useRequest(
-    (email: string, password: string) => {
-      return auth.signUp({ email, password });
+    (email: string, password: string, name: string) => {
+      return auth.signUp({ email, password, name });
     }
   );
 
@@ -23,13 +27,15 @@ export default observer(function SignInPage() {
     initialValues: {
       email: "",
       password: "",
+      name: "",
     },
     onSubmit(values) {
-      return request(values.email, values.password);
+      return request(values.email, values.password, values.name);
     },
     validationSchema: Yup.object({
       email: emailRule,
       password: passwordRule,
+      name: nameRule,
     }),
   });
 
@@ -60,6 +66,21 @@ export default observer(function SignInPage() {
               error={!!formik.touched.email && !!formik.errors.email}
               {...getValidationFieldProps(formik, "email")}
               {...formik.getFieldProps("email")}
+            />
+          </FormGroup>
+          <FormGroup
+            sx={{
+              marginBottom: 1,
+            }}
+          >
+            <TextField
+              fullWidth
+              label={t("common:fields.name.label")}
+              variant={"outlined"}
+              disabled={isFetching}
+              error={!!formik.touched.name && !!formik.errors.name}
+              {...getValidationFieldProps(formik, "name")}
+              {...formik.getFieldProps("name")}
             />
           </FormGroup>
           <FormGroup

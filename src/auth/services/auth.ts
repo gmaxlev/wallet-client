@@ -21,15 +21,25 @@ class Auth {
       password,
       remember,
     });
+    this.isLogin = true;
   }
 
-  signUp({ email, password }: SignUpDto) {
-    return api.auth.signUp({ email, password });
+  signUp({ email, password, name }: SignUpDto) {
+    return api.auth.signUp({ email, password, name });
+  }
+
+  async logout(): Promise<void> {
+    if (!this.isLogin) {
+      return;
+    }
+    await api.auth.logout();
+    this.isLogin = false;
   }
 
   async restore() {
     try {
-      user.user = await api.user.get();
+      const { data } = await api.user.get();
+      user.setUser(data);
       this.isLogin = true;
       return true;
     } catch (e: unknown) {

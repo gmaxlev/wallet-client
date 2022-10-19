@@ -4,14 +4,23 @@ import reportWebVitals from "./reportWebVitals";
 import App from "./App";
 import { CssBaseline } from "@mui/material";
 import "./i18n";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <>
-    <CssBaseline />
-    <App />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
   </>
 );
 

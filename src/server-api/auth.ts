@@ -16,10 +16,19 @@ const auth = (client: AxiosInstance) => ({
       remember,
     });
   },
-  signUp({ email, password }: { email: string; password: string }) {
+  signUp({
+    email,
+    password,
+    name,
+  }: {
+    email: string;
+    password: string;
+    name: string;
+  }) {
     return client.post("/auth/sign-up", {
       email,
       password,
+      name,
     });
   },
 

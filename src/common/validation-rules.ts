@@ -8,3 +8,7 @@ export const emailRule = Yup.string()
 export const passwordRule = Yup.string()
   .required("fields.password.errors.required")
   .trim();
+
+export const nameRule = Yup.string()
+  .required("fields.password.errors.required")
+  .trim();

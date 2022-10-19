@@ -12,6 +12,12 @@
       "errors": {
         "required": "Введіть пароль"
       }
+    },
+    "name": {
+      "label": "Ім'я",
+      "errors": {
+        "required": "Введіть ім'я"
+      }
     }
   }
 }

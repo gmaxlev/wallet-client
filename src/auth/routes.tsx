@@ -12,7 +12,7 @@ export const authRoutes = [
     path: "/auth",
     async loader() {
       if (auth.isLogin) {
-        return redirect("/");
+        return redirect("/app");
       }
       const uk = await import("./locales/uk.json");
       return i18next.addResourceBundle("uk", "auth", uk.default);
