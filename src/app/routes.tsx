@@ -1,45 +1,36 @@
-import { Suspense } from "react";
-import React from "react";
-import auth from "../auth/services/auth";
-import { redirect } from "react-router-dom";
-import i18next from "../i18n";
+import { DefinedRoute } from "../router/types";
+import { AuthGuardService } from "../auth/guards/AuthGuardService";
+import accountsRoutes from "./accounts/routes";
+import { injectFn } from "../ioc/container";
+import { I18nService } from "../i18n/I18nService";
+import DefaultErrorElement from "../components/DefaultErrorElement/DefaultErrorElement";
+import { UnauthorizedCatcher } from "../auth/catchers/UnauthorizedCatcher";
 
-const AppLayout = React.lazy(() => import("./layouts/AppLayout/AppLayout"));
-const AppHomePage = React.lazy(() => import("./pages/AppHomePage"));
-const SettingsPage = React.lazy(() => import("./pages/SettingsPage"));
-
-export const appRoutes = [
+const appRoutes: DefinedRoute[] = [
   {
-    path: "/app",
-    async loader() {
-      if (!auth.isLogin) {
-        return redirect("/auth/sign-in");
-      }
-      const uk = await import("./locales/uk.json");
-      return i18next.addResourceBundle("uk", "app", uk.default);
-    },
-    element: (
-      <Suspense>
-        <AppLayout />
-      </Suspense>
+    name: "app",
+    path: "app",
+    catchers: [UnauthorizedCatcher],
+    guards: [AuthGuardService],
+    waitFor: injectFn(
+      [I18nService],
+      (i18nService: I18nService) => () =>
+        i18nService.load("app", {
+          uk: import("./locales/uk.json"),
+        })
     ),
+    component: () => import("./layouts/AppLayout/AppLayout"),
+    errorElement: <DefaultErrorElement />,
+    errorElementForChildren: <DefaultErrorElement />,
     children: [
       {
-        path: "",
-        element: (
-          <Suspense>
-            <AppHomePage />
-          </Suspense>
-        ),
+        index: true,
+        name: "app-home",
+        component: () => import("./pages/AppHomePage"),
       },
-      {
-        path: "settings",
-        element: (
-          <Suspense>
-            <SettingsPage />
-          </Suspense>
-        ),
-      },
+      ...accountsRoutes,
     ],
   },
 ];
+
+export default appRoutes;

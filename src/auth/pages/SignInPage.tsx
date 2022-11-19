@@ -1,59 +1,89 @@
-import { observer } from "mobx-react-lite";
+import useTitle from "../../meta/useTitle";
+import { useTranslation } from "react-i18next";
 import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   Grid,
   TextField,
   Typography,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Button,
+  Box,
+  Alert,
 } from "@mui/material";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { emailRule, passwordRule } from "../../common/validation-rules";
-import { getValidationFieldProps } from "../../common/validation-utils";
 import { LoadingButton } from "@mui/lab";
-import { useTranslation } from "react-i18next";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
-import { useRequest } from "../../hooks";
-import auth from "../services/auth";
-import { useMemo, useState } from "react";
+import { useFormik } from "formik";
+import useRequest from "../../hooks/useRequest";
+import { useInject } from "../../ioc/container";
+import { AuthService } from "../services/AuthService";
+import emailValidation from "../validations/email.validation";
+import passwordValidation from "../validations/password.validation";
+import * as Yup from "yup";
+import React, { useMemo, useState } from "react";
+import { getValidationFieldProps } from "../../common/validation-utils";
+import UserFriendlyError from "../../components/UserFriendlyError/UserFriendlyError";
 import { useNavigate } from "react-router-dom";
-
-export default observer(function SignInPage() {
+import { RoutingService } from "../../router/RoutingService";
+import MuiRouterLink from "../../router/components/MuiRouterLink";
+import { useLocation } from "react-router";
+export default function SignInPage() {
+  const [success, setSuccess] = useState(false);
   const { t } = useTranslation("auth");
-
-  const [isRegistered, setRegistered] = useState(false);
-
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const { request, isFetching } = useRequest(
-    (email: string, password: string, remember: boolean) => {
-      return auth.signIn({ email, password, remember });
+  const redirectTo = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const link = params.get("redirect");
+    if (!link) {
+      return null;
+    }
+    return decodeURI(link);
+  }, [location]);
+
+  useTitle(t("sign-in"));
+
+  const authService = useInject<AuthService>(AuthService);
+  const routingService = useInject<RoutingService>(RoutingService);
+
+  const { request, isFetching, error } = useRequest(
+    async (email: string, password: string, remember: boolean) => {
+      await authService.signIn({ email, password, remember });
+      setSuccess(true);
+      const to = redirectTo ? redirectTo : routingService.generatePath("app");
+      navigate(to);
     }
   );
 
-  const isDisabled = useMemo<boolean>(() => {
-    return isRegistered || isFetching;
-  }, [isRegistered, isFetching]);
+  const emailAfterSignUp = useMemo<string | undefined>(
+    () => location.state?.signUp?.email,
+    [location]
+  );
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      email: emailAfterSignUp ? emailAfterSignUp : "",
       password: "",
       remember: true,
     },
-    async onSubmit(values) {
-      try {
-        await request(values.email, values.password, values.remember);
-        setRegistered(true);
-        navigate("/app/");
-      } catch (e) {}
-    },
+    onSubmit: (values) =>
+      request(values.email, values.password, values.remember),
     validationSchema: Yup.object({
-      email: emailRule,
-      password: passwordRule,
+      email: emailValidation,
+      password: passwordValidation,
     }),
   });
+
+  const isDisabled = useMemo(
+    () => isFetching || success,
+    [isFetching, success]
+  );
+
+  const signUpLink = useMemo(
+    () => routingService.generatePath("sign-up"),
+    [routingService]
+  );
 
   return (
     <Grid
@@ -66,8 +96,14 @@ export default observer(function SignInPage() {
       <Grid item xs sm={5} md={3}>
         <Typography variant={"h3"} component={"h1"} marginBottom={3}>
           <VpnKeyIcon sx={{ fontSize: 40, marginRight: 2 }} />
-          {t("signIn")}
+          {t("sign-in")}
         </Typography>
+        {emailAfterSignUp && (
+          <Alert severity={"success"} sx={{ mb: 2 }}>
+            Вас успішно зареєстровано
+          </Alert>
+        )}
+        <UserFriendlyError serverData={error} />
         <form onSubmit={formik.handleSubmit}>
           <FormGroup
             sx={{
@@ -76,10 +112,9 @@ export default observer(function SignInPage() {
           >
             <TextField
               fullWidth
-              label={t("common:fields.email.label")}
+              label={t("fields.email.label")}
               variant={"outlined"}
               disabled={isDisabled}
-              error={!!formik.touched.email && !!formik.errors.email}
               {...getValidationFieldProps(formik, "email")}
               {...formik.getFieldProps("email")}
             />
@@ -92,9 +127,10 @@ export default observer(function SignInPage() {
             <TextField
               type={"password"}
               fullWidth
-              label={t("common:fields.password.label")}
+              label={t("fields.password.label")}
               variant={"outlined"}
               disabled={isDisabled}
+              autoFocus={!!emailAfterSignUp}
               {...getValidationFieldProps(formik, "password")}
               {...formik.getFieldProps("password")}
             />
@@ -113,7 +149,7 @@ export default observer(function SignInPage() {
                   onChange={formik.handleChange}
                 />
               }
-              label={t("rememberMe")}
+              label={t("fields.rememberMe.label")}
             />
           </FormGroup>
           <LoadingButton
@@ -124,10 +160,20 @@ export default observer(function SignInPage() {
             size={"large"}
             fullWidth
           >
-            {t("signInSubmit")}
+            {t("fields.signInSubmit.label")}
           </LoadingButton>
+          <Box sx={{ textAlign: "center", mt: 3 }}>
+            <Button
+              variant={"text"}
+              disabled={isDisabled}
+              href={signUpLink}
+              component={MuiRouterLink}
+            >
+              {t("sign-up")}
+            </Button>
+          </Box>
         </form>
       </Grid>
     </Grid>
   );
-});
+}

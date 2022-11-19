@@ -10,7 +10,7 @@ interface Props {
 export function NavLinks({ items, onClick }: Props) {
   return (
     <List>
-      {items.map(({ text, Icon, link, action }, index) => (
+      {items.map(({ text, Icon, link, action, end }, index) => (
         <ListItem key={index} disablePadding sx={{ display: "block" }}>
           <NavLink
             text={text}
@@ -18,6 +18,7 @@ export function NavLinks({ items, onClick }: Props) {
             action={action}
             Icon={Icon}
             onClick={onClick}
+            end={end}
           />
         </ListItem>
       ))}

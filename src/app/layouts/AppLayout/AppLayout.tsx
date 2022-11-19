@@ -1,9 +1,16 @@
 import { Outlet } from "react-router-dom";
 import HeaderLayout from "./HeaderLayout";
-import { Box, styled, useTheme, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  styled,
+  useTheme,
+  useMediaQuery,
+  Typography,
+} from "@mui/material";
 import { useCallback, useState } from "react";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileMenu from "./MobileMenu";
+import React from "react";
 
 export const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -45,11 +52,24 @@ export default function AppLayout() {
           component="main"
           sx={{
             flexGrow: 1,
-            padding: 3,
+            pt: 2,
+            pb: 3,
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
           }}
         >
           <DrawerHeader />
-          <Outlet />
+          <Box sx={{ flexGrow: 1 }}>
+            <Outlet />
+          </Box>
+          <Typography
+            variant={"overline"}
+            component={"footer"}
+            sx={{ textAlign: "center", mt: 3 }}
+          >
+            © Wallet 2022
+          </Typography>
         </Box>
       </Box>
     </>

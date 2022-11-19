@@ -10,15 +10,25 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
-import user from "../../../user/services/user";
 import DesktopUserMenu from "./DesktopUserMenu";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useInject } from "../../../ioc/container";
+import { MetaService } from "../../../meta/MetaService";
+import { AuthService } from "../../../auth/services/AuthService";
+import { useNavigation } from "react-router-dom";
+import { LinearProgress } from "@mui/material";
 
 interface Props {
   onToggle: () => unknown;
 }
 
-export default function HeaderLayout({ onToggle }: Props) {
+export default observer(function HeaderLayout({ onToggle }: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const metaService = useInject<MetaService>(MetaService);
+  const authService = useInject<AuthService>(AuthService);
+
+  const navigation = useNavigation();
 
   const theme = useTheme();
 
@@ -48,9 +58,13 @@ export default function HeaderLayout({ onToggle }: Props) {
             variant={"h6"}
             color={"inherit"}
             noWrap
-            sx={{ flexGrow: 1 }}
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              alignItems: "center",
+            }}
           >
-            Wallet
+            {metaService.title}
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={"Меню"}>
@@ -58,8 +72,8 @@ export default function HeaderLayout({ onToggle }: Props) {
                 sx={{ p: 0 }}
                 onClick={(event) => setAnchorEl(event.currentTarget)}
               >
-                <Avatar alt={"immaxlev@gmail.com"}>
-                  {user.name?.trim().slice(0, 1).toUpperCase()}
+                <Avatar alt={authService.user?.email}>
+                  {authService.user?.name?.trim().slice(0, 1).toUpperCase()}
                 </Avatar>
               </IconButton>
             </Tooltip>
@@ -69,7 +83,10 @@ export default function HeaderLayout({ onToggle }: Props) {
             />
           </Box>
         </Toolbar>
+        {navigation.state === "loading" && (
+          <LinearProgress sx={{ height: "3px" }}></LinearProgress>
+        )}
       </AppBar>
     </Box>
   );
-}
+});

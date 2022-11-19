@@ -2,8 +2,9 @@ import { Menu, MenuItem, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
-import auth from "../../../auth/services/auth";
-
+import React from "react";
+import { useInject } from "../../../ioc/container";
+import { RoutingService } from "../../../router/RoutingService";
 interface Props {
   anchorEl: HTMLElement | null;
   onClose: () => unknown;
@@ -14,25 +15,18 @@ export default function DesktopUserMenu({ anchorEl, onClose }: Props) {
 
   const { t } = useTranslation("app");
 
+  const routingService = useInject<RoutingService>(RoutingService);
+
   const items = useMemo(() => {
     return [
       {
-        text: t("profile"),
-        link: "/app/",
-      },
-      {
-        text: t("settings"),
-        link: "/app/settings",
-      },
-      {
-        text: t("logout"),
+        text: t("sections.logout"),
         async action() {
-          await auth.logout();
-          navigate("/auth/sign-in");
+          navigate(routingService.generatePath("logout"));
         },
       },
     ];
-  }, []);
+  }, [navigate, routingService, t]);
 
   function selectMenuItem(option: {
     text: string;

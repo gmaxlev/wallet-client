@@ -1,39 +1,47 @@
-import i18next from "../i18n";
-import { Suspense } from "react";
-import React from "react";
-import auth from "./services/auth";
-import { redirect } from "react-router-dom";
+import { DefinedRoute } from "../router/types";
+import { GuestGuardService } from "./guards/GuestGuardService";
+import { injectFn } from "../ioc/container";
+import { I18nService } from "../i18n/I18nService";
+import { AuthGuardService } from "./guards/AuthGuardService";
+import LogoutPage from "./pages/LogoutPage";
+import DefaultErrorElement from "../components/DefaultErrorElement/DefaultErrorElement";
 
-const SignInPage = React.lazy(() => import("./pages/SignInPage"));
-const SignUpPage = React.lazy(() => import("./pages/SignUpPage"));
+const localesLoader = injectFn(
+  [I18nService],
+  (i18nService: I18nService) => () =>
+    i18nService.load("auth", {
+      uk: import("./locales/uk.json"),
+    })
+);
 
-export const authRoutes = [
+const authRoutes: DefinedRoute[] = [
   {
-    path: "/auth",
-    async loader() {
-      if (auth.isLogin) {
-        return redirect("/app");
-      }
-      const uk = await import("./locales/uk.json");
-      return i18next.addResourceBundle("uk", "auth", uk.default);
-    },
+    name: "auth",
+    path: "auth",
+    errorElementForChildren: <DefaultErrorElement />,
     children: [
       {
+        name: "sign-in",
         path: "sign-in",
-        element: (
-          <Suspense>
-            <SignInPage />
-          </Suspense>
-        ),
+        waitFor: localesLoader,
+        guards: [GuestGuardService],
+        component: () => import("./pages/SignInPage"),
       },
       {
+        name: "sign-up",
         path: "sign-up",
-        element: (
-          <Suspense>
-            <SignUpPage />
-          </Suspense>
-        ),
+        waitFor: localesLoader,
+        guards: [GuestGuardService],
+        component: () => import("./pages/SignUpPage"),
+      },
+      {
+        name: "logout",
+        path: "logout",
+        guards: [AuthGuardService],
+        element: LogoutPage,
       },
     ],
   },
 ];
+
+export default authRoutes;

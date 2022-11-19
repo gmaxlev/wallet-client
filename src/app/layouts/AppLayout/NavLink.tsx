@@ -1,21 +1,36 @@
-import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import React, { useMemo } from "react";
-import { useMatch, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 
 export interface NavLinkType {
   text: string;
   link?: string;
   action?: () => unknown;
   Icon: React.ComponentType;
+  end: boolean;
 }
 
 interface Props extends NavLinkType {
   onClick?: () => unknown;
 }
 
-export default function NavLink({ text, link, action, Icon, onClick }: Props) {
+export default function NavLink({
+  text,
+  link,
+  action,
+  Icon,
+  onClick,
+  end,
+}: Props) {
   const navigate = useNavigate();
-  const isMatched = useMatch(link ? link : "");
+  const isMatched = useMatch(
+    link
+      ? {
+          path: link,
+          end,
+        }
+      : ""
+  );
   const isActive = useMemo(() => {
     return !!link && !!isMatched;
   }, [link, isMatched]);
@@ -37,13 +52,14 @@ export default function NavLink({ text, link, action, Icon, onClick }: Props) {
   }
 
   return (
-    <ListItemButton
+    <ListItem
+      button
       sx={{
         minHeight: 48,
         justifyContent: "initial",
         px: 2.5,
       }}
-      {...(link && { href: link })}
+      {...(link && { to: link, component: Link })}
       onClick={(event) => handleClickOption(event, link, action)}
       selected={isActive}
     >
@@ -57,6 +73,6 @@ export default function NavLink({ text, link, action, Icon, onClick }: Props) {
         <Icon />
       </ListItemIcon>
       <ListItemText primary={text} />
-    </ListItemButton>
+    </ListItem>
   );
 }

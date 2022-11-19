@@ -5,12 +5,12 @@ import MuiDrawer from "@mui/material/Drawer";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useMemo } from "react";
-import auth from "../../../auth/services/auth";
-import { useNavigate } from "react-router-dom";
 import { NavLinkType } from "./NavLink";
 import { useTranslation } from "react-i18next";
-import SettingsIcon from "@mui/icons-material/Settings";
-
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import React from "react";
+import { useInject } from "../../../ioc/container";
+import { RoutingService } from "../../../router/RoutingService";
 interface Props {
   open: boolean;
 }
@@ -60,31 +60,33 @@ const Drawer = styled(MuiDrawer, {
 
 export default function DesktopSidebar({ open }: Props) {
   const { t } = useTranslation("app");
-  const navigate = useNavigate();
+
+  const routingService = useInject<RoutingService>(RoutingService);
 
   const items = useMemo<{ [key: string]: NavLinkType[] }>(() => {
     return {
       top: [
         {
-          text: t("overview"),
-          link: "/app",
+          text: t("sections.overview"),
+          link: routingService.generatePath("app"),
           Icon: DashboardIcon,
+          end: true,
         },
       ],
-      middle: [],
+      middle: [
+        {
+          text: t("sections.accounts"),
+          link: routingService.generatePath("accounts"),
+          Icon: AccountBalanceWalletIcon,
+          end: false,
+        },
+      ],
       bottom: [
         {
-          text: t("settings"),
-          link: "/app/settings",
-          Icon: SettingsIcon,
-        },
-        {
-          text: t("logout"),
-          action: async () => {
-            await auth.logout();
-            navigate("/auth/sign-in");
-          },
+          text: t("sections.logout"),
+          link: routingService.generatePath("logout"),
           Icon: LogoutIcon,
+          end: true,
         },
       ],
     };

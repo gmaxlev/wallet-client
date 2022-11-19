@@ -1,0 +1,13 @@
+{
+  "common": {
+    "unknownError": "Невідома помилка",
+    "resourcesNotFound": {
+      "title": "Ой...",
+      "content": "Ресурс не знайдено"
+    },
+    "defaultErrorElement": {
+      "title": "Помилка",
+      "header": "Ой..."
+    }
+  }
+}

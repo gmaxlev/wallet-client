@@ -7,16 +7,16 @@ import {
 } from "@mui/material";
 import { NavLinks } from "./NavLinks";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import CategoryIcon from "@mui/icons-material/Category";
 import LogoutIcon from "@mui/icons-material/Logout";
-import auth from "../../../auth/services/auth";
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import user from "../../../user/services/user";
-import SettingsIcon from "@mui/icons-material/Settings";
 import { NavLinkType } from "./NavLink";
 import { useTranslation } from "react-i18next";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import React from "react";
+import { useInject } from "../../../ioc/container";
+import { AuthService } from "../../../auth/services/AuthService";
+import { RoutingService } from "../../../router/RoutingService";
 
 interface Props {
   open: boolean;
@@ -24,36 +24,38 @@ interface Props {
 }
 
 export default observer(function MobileMenu({ open, onClose }: Props) {
-  const navigate = useNavigate();
-
   const { t } = useTranslation("app");
+
+  const routingService = useInject<RoutingService>(RoutingService);
+
+  const authService = useInject<AuthService>(AuthService);
 
   const items = useMemo<{ [key: string]: NavLinkType[] }>(() => {
     return {
       top: [
         {
-          text: t("overview"),
-          link: "/app",
+          text: t("sections.overview"),
+          link: routingService.generatePath("app"),
           Icon: DashboardIcon,
+          end: true,
+        },
+        {
+          text: t("sections.accounts"),
+          link: routingService.generatePath("accounts"),
+          Icon: AccountBalanceWalletIcon,
+          end: false,
         },
       ],
       bottom: [
         {
-          text: t("settings"),
-          link: "/app/settings",
-          Icon: SettingsIcon,
-        },
-        {
-          text: t("logout"),
-          action: async () => {
-            await auth.logout();
-            navigate("/auth/sign-in");
-          },
+          text: t("sections.logout"),
+          link: routingService.generatePath("logout"),
           Icon: LogoutIcon,
+          end: true,
         },
       ],
     };
-  }, []);
+  }, [routingService, t]);
 
   return (
     <SwipeableDrawer
@@ -77,14 +79,14 @@ export default observer(function MobileMenu({ open, onClose }: Props) {
       >
         <Box>
           <Box sx={{ p: 2 }}>
-            <Avatar alt={user.email}>
-              {user.name?.trim().slice(0, 1).toUpperCase()}
+            <Avatar alt={"user.email"}>
+              {authService.user?.name?.trim().slice(0, 1).toUpperCase()}
             </Avatar>
             <Typography variant={"h6"} mt={1}>
-              {user.name}
+              {authService.user?.name}
             </Typography>
             <Typography component="p" variant="caption">
-              {user.email}
+              {authService.user?.email}
             </Typography>
           </Box>
           <Divider />

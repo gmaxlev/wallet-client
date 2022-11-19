@@ -1,7 +1,34 @@
 {
-  "signIn": "Увійти",
-  "rememberMe": "Запам'ятати мене",
-  "signInSubmit": "Увійти",
-  "signUp": "Реєстрація",
-  "signUpSubmit": "Зареєструватися"
+  "sign-in": "Увійти",
+  "sign-up": "Реєстрація",
+  "fields": {
+    "email": {
+      "label": "Email",
+      "errors": {
+        "email": "Введіть коректну електронну пошту",
+        "required": "Введіть електронну пошту"
+      }
+    },
+    "password": {
+      "label": "Пароль",
+      "errors": {
+        "required": "Введіть пароль"
+      }
+    },
+    "name": {
+      "label": "Ім'я",
+      "errors": {
+        "required": "Введіть ім'я"
+      }
+    },
+    "rememberMe": {
+      "label": "Запам'ятати мене"
+    },
+    "signInSubmit": {
+      "label": "Увійти"
+    },
+    "signUpSubmit": {
+      "label": "Зареєструватися"
+    }
+  }
 }
