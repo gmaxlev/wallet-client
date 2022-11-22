@@ -5,6 +5,7 @@ import { injectFn } from "../ioc/container";
 import { I18nService } from "../i18n/I18nService";
 import DefaultErrorElement from "../components/DefaultErrorElement/DefaultErrorElement";
 import { UnauthorizedCatcher } from "../auth/catchers/UnauthorizedCatcher";
+import categoriesRoutes from "./categories/routes";
 
 const appRoutes: DefinedRoute[] = [
   {
@@ -29,6 +30,7 @@ const appRoutes: DefinedRoute[] = [
         component: () => import("./pages/AppHomePage"),
       },
       ...accountsRoutes,
+      ...categoriesRoutes,
     ],
   },
 ];

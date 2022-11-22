@@ -104,8 +104,9 @@ export default function AccountsPage() {
                 <AccountCard
                   account={item}
                   isNew={location.state?.created?.id === item.id}
-                  onDelete={(account) => confirmState.setTarget(account)}
-                  remove={items.length > 1}
+                  {...(items.length > 1 && {
+                    removeLinkOrAction: () => confirmState.setTarget(item),
+                  })}
                 />
               </Grid>
             ))

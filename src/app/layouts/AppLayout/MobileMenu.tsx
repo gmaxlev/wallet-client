@@ -13,6 +13,7 @@ import { observer } from "mobx-react-lite";
 import { NavLinkType } from "./NavLink";
 import { useTranslation } from "react-i18next";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import CategoryIcon from "@mui/icons-material/Category";
 import React from "react";
 import { useInject } from "../../../ioc/container";
 import { AuthService } from "../../../auth/services/AuthService";
@@ -43,6 +44,12 @@ export default observer(function MobileMenu({ open, onClose }: Props) {
           text: t("sections.accounts"),
           link: routingService.generatePath("accounts"),
           Icon: AccountBalanceWalletIcon,
+          end: false,
+        },
+        {
+          text: t("sections.categories"),
+          link: routingService.generatePath("categories"),
+          Icon: CategoryIcon,
           end: false,
         },
       ],

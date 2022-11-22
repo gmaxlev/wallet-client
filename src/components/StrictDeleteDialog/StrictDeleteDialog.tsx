@@ -8,15 +8,15 @@ import {
   TextField,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { AccountDto } from "../../api/resources/account/Account.dto";
 import useRequest from "../../hooks/useRequest";
 import UserFriendlyError from "../UserFriendlyError/UserFriendlyError";
 import { ConfirmState } from "../../hooks/useConfirm";
 import React, { useCallback, useEffect, useState, memo } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useTranslation } from "react-i18next";
 
 interface Props {
-  confirmState: ConfirmState<AccountDto>;
+  confirmState: ConfirmState<any>;
   action: () => unknown;
   header: React.ReactNode;
   label: string;
@@ -36,6 +36,8 @@ export default memo(function AccountDeleteDialog({
 }: Props) {
   const [input, setInput] = useState("");
   const [confirmed, setConfirm] = useState(false);
+
+  const { t } = useTranslation();
 
   const { request, isFetching, error, reset } = useRequest(async () => {
     await action();
@@ -92,7 +94,7 @@ export default memo(function AccountDeleteDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} autoFocus disabled={isDisabled}>
-          Скасувати
+          {t("strictDeleteDialog.cancel")}
         </Button>
 
         {confirmed ? (
@@ -103,7 +105,7 @@ export default memo(function AccountDeleteDialog({
             loading={isDisabled}
             startIcon={<DeleteIcon />}
           >
-            Підтвердити
+            {t("strictDeleteDialog.confirm")}
           </LoadingButton>
         ) : (
           <LoadingButton
@@ -113,7 +115,7 @@ export default memo(function AccountDeleteDialog({
             loading={isDisabled}
             startIcon={<DeleteIcon />}
           >
-            Видалити
+            {t("strictDeleteDialog.remove")}
           </LoadingButton>
         )}
       </DialogActions>

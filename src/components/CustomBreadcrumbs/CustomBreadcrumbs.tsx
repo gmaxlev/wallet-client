@@ -1,9 +1,9 @@
-import { Link, SvgIconTypeMap, Typography } from "@mui/material";
-import { Link as LinkReactRouter } from "react-router-dom";
+import { SvgIconTypeMap, Typography } from "@mui/material";
 import { Breadcrumbs } from "@mui/material";
 import React from "react";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { memo } from "react";
+import MuiRouterLink from "../../router/components/MuiRouterLink";
 
 interface Props {
   chain: Array<{
@@ -19,17 +19,16 @@ export default memo(function CustomBreadcrumbs({ chain, current }: Props) {
     <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
       {chain.map(({ to, text, Icon }, index) => {
         return (
-          <Link
+          <MuiRouterLink
             underline={"hover"}
-            component={LinkReactRouter}
-            to={to}
+            href={to}
             sx={{ display: "flex", alignItems: "center" }}
             color="inherit"
             key={index}
           >
             {Icon && <Icon fontSize={"inherit"} sx={{ mr: 0.5 }} />}
             {text}
-          </Link>
+          </MuiRouterLink>
         );
       })}
 

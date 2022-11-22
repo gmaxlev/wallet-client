@@ -8,6 +8,14 @@
     "defaultErrorElement": {
       "title": "Помилка",
       "header": "Ой..."
+    },
+    "resourceCard": {
+      "edit": "Редагувати"
+    },
+    "strictDeleteDialog": {
+      "cancel": "Скасувати",
+      "confirm": "Підтвердити",
+      "remove": "Видалити"
     }
   }
 }

@@ -11,6 +11,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import React from "react";
 import { useInject } from "../../../ioc/container";
 import { RoutingService } from "../../../router/RoutingService";
+import CategoryIcon from "@mui/icons-material/Category";
 interface Props {
   open: boolean;
 }
@@ -78,6 +79,12 @@ export default function DesktopSidebar({ open }: Props) {
           text: t("sections.accounts"),
           link: routingService.generatePath("accounts"),
           Icon: AccountBalanceWalletIcon,
+          end: false,
+        },
+        {
+          text: t("sections.categories"),
+          link: routingService.generatePath("categories"),
+          Icon: CategoryIcon,
           end: false,
         },
       ],

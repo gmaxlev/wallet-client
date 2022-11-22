@@ -85,7 +85,7 @@ export default function AccountEditControl({
         currencyId: data.data.currency.id,
       });
     }
-  }, [data, formik]);
+  }, [data]);
 
   const isDisabled = isFetching || confirmState.isDone;
 
@@ -171,18 +171,18 @@ export default function AccountEditControl({
         >
           {t("accounts.update.button")}
         </LoadingButton>
-        <Box sx={{ textAlign: "center", mt: 3 }}>
-          <Button
-            variant={"text"}
-            color={"error"}
-            startIcon={<DeleteIcon />}
-            disabled={isDisabled}
-            onClick={() => confirmState.setTarget(accountServerData)}
-          >
-            {t("accounts.update.delete")}
-          </Button>
-        </Box>
       </form>
+      <Box sx={{ textAlign: "center", mt: 3 }}>
+        <Button
+          variant={"text"}
+          color={"error"}
+          startIcon={<DeleteIcon />}
+          disabled={isDisabled}
+          onClick={() => confirmState.setTarget(accountServerData)}
+        >
+          {t("accounts.update.delete")}
+        </Button>
+      </Box>
     </>
   );
 }

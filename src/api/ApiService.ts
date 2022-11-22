@@ -1,13 +1,14 @@
 import { AxiosError, AxiosInstance } from "axios";
 import ServiceSingletonSelfBind from "../ioc/decorators/ServiceSingletonSelfBind.decorator";
-import auth from "./resources/auth/auth.resource";
-import user from "./resources/user/user.resource";
-import account from "./resources/account/account.resource";
-import currency from "./resources/currency/currency.resource";
 import { inject } from "inversify";
 import { getProviderKey } from "../ioc/container";
 import { AXIOS_PROVIDER, CONFIG_PROVIDER } from "../providers";
 import type { ProviderType } from "../ioc/types";
+import auth from "./resources/auth/auth.resource";
+import user from "./resources/user/user.resource";
+import account from "./resources/account/account.resource";
+import currency from "./resources/currency/currency.resource";
+import category from "./resources/category/category.resource";
 
 @ServiceSingletonSelfBind
 export class ApiService {
@@ -17,6 +18,7 @@ export class ApiService {
     user: ReturnType<typeof user>;
     account: ReturnType<typeof account>;
     currency: ReturnType<typeof currency>;
+    category: ReturnType<typeof category>;
   };
 
   private ignoreToken = ["/auth/sign-in"];
@@ -37,6 +39,7 @@ export class ApiService {
       user: user(this.axiosInstance),
       account: account(this.axiosInstance),
       currency: currency(this.axiosInstance),
+      category: category(this.axiosInstance),
     };
 
     this.createJWTInterceptor();
